@@ -192,19 +192,19 @@ class NotestyleEditor extends MusicBeatState
             }
         }
 
-        // notestyleDataWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/windows/notestyleDataWindow'));
-        // notestyleDataWindow.windowManager = windowManager;
-        // add(notestyleDataWindow);
+        notestyleDataWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/windows/notestyleDataWindow'));
+        notestyleDataWindow.windowManager = windowManager;
+        add(notestyleDataWindow);
 
-        // notestyleDataWindow.x = 5;
-        // notestyleDataWindow.y = menuBar.height + 5;
+        notestyleDataWindow.x = 5;
+        notestyleDataWindow.y = menuBar.height + 5;
 
-        // notestyleNoteDataWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/windows/notestyleNoteDataWindow'));
-        // notestyleNoteDataWindow.windowManager = windowManager;
-        // add(notestyleNoteDataWindow);
+        notestyleNoteDataWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/windows/notestyleNoteDataWindow'));
+        notestyleNoteDataWindow.windowManager = windowManager;
+        add(notestyleNoteDataWindow);
 
-        // notestyleNoteDataWindow.x = 5;
-        // notestyleNoteDataWindow.y = menuBar.height + notestyleDataWindow.height + 5;
+        notestyleNoteDataWindow.x = 5;
+        notestyleNoteDataWindow.y = menuBar.height + notestyleDataWindow.height + 5;
     }
 
     function update(elapsed:Float):Void
