@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menubar id="menubar" width="100%" height="40" paddingLeft="172">
+  <style>
+    .menu {
+    // The width of the individual menu items
+    width: 120px;
+    }
+  </style>
+
+  <menu text="File">
+    <menu-item id="newNotestyleMenuItem" text="New" shortcutText="Ctrl + N" />
+    <menu-separator />
+    <menu-item id="saveNotestyleMenuItem" text="Save" shortcutText="Ctrl + S"/>
+    <menu-separator />
+    <menu-item id="exitToMenu" text="Exit To Menu" shortcutText="Ctrl + Q" />
+  </menu>
+  <menu text="Windows">
+    <menu-item id="notestyleDataWindow" text="Notestyle Data" />
+    <menu-item id="songDataWindow" text="Song Data" />
+  </menu>
+
+  <menu text="Testing">
+    <menu-checkbox id="menubarTestCheckbox" text="Test Notestyle" tooltip="Test the notestyle by displaying oncoming notes,\nshowing splashes and hold note covers." />
+  </menu>
+
+  <menu text="Help">
+    <menu-item id="userGuide" text="User Guide" shortcutText="F1" />
+    <menu-item id="checkForUpdates" text="Check for Updates" />
+  </menu>
+
+  <!-- <checkbox id="menubarTestCheckbox" text="Test Notestyle" tooltip="Test the notestyle by displaying oncoming notes,\nshowing splashes and hold note covers." verticalAlign="center" /> -->
+
+  <spacer width="100%" />
+  <label text="anysad Notestyle Editor v0.0.1" verticalAlign="center" />
+</menubar>

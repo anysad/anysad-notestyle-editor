@@ -1,0 +1,26 @@
+import flixel.FlxG;
+import funkin.modding.module.Module;
+import funkin.ui.debug.DebugMenuSubState;
+import funkin.modding.base.ScriptedMusicBeatState;
+
+class NotestyleEditorInjection extends Module
+{
+    public function new()
+    {
+        super('notestyle-editor-injection');
+    }
+
+    override public function onSubStateOpenEnd(event:StateChangeScriptEvent)
+    {
+        if (Std.isOfType(event.targetState, DebugMenuSubState))
+        {   
+            var state = event.targetState;
+            state.createItem("Notestyle Editor", openUnlockState);
+        }
+    }
+
+    public function openUnlockState()
+    {
+        FlxG.switchState(ScriptedMusicBeatState.init('NotestyleEditor'));
+    }
+}

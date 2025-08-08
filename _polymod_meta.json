@@ -1,0 +1,24 @@
+{
+  "music": "freakyMenu",
+  "title": "anysad Notestyle Editor",
+  "description": "An editor that makes life easier by creating stickerpacks (who would have thought???).",
+  "contributors": [
+    {
+      "name": "anysad",
+      "icon": "anysad",
+      "color": "#00b2ff",
+      "roles": "Coder",
+      "url": "https://x.com/realanysad"
+    },
+    {
+      "name": "comedylost",
+      "icon": "comedylost",
+      "color": "#00aaff",
+      "roles": "Making code for replacing notes",
+      "url": "https://www.youtube.com/channel/UCGUHN_tmfSFAzKa3hOhHT-Q"
+    }
+  ],
+  "api_version": "0.6.4",
+  "mod_version": "0.0.1",
+  "license": "Apache 2.0"
+}
