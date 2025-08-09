@@ -1,4 +1,4 @@
-<window title="Notestyle Note Data" width="350" maximizable="false" minimizable="false" closable="false">
+<window title="Notestyle Note Data" width="390" maximizable="false" minimizable="false" closable="false">
     <vbox width="100%">
         <label text="General Information" style="font-size: 17px" verticalAlign="center" horizontalAlign="center" />
         <grid columns="2" tooltip="The image to use for the asset.\nMay be a Sparrow sprite sheet." width="100%">
@@ -6,46 +6,53 @@
             <textfield id="notestyleNoteAssetPath" placeholder="Image to use as an asset." width="100%" />
         </grid>
 
-        <grid columns="3" tooltip="The scale to render the note at." width="100%">
-            <label text="Note Scale" verticalAlign="center" />
-            <number-stepper id="notestyleNoteScale" style="font-size: 10px" pos="1" step="0.1" min="0.1" width="100%" />
+        <grid columns="2" width="100%">
+            <hbox width="100%" tooltip="The scale to render the note at." verticalAlign="center" >
+                <label text="Note Scale" />
+                <number-stepper id="notestyleNoteScale" style="font-size: 10px" pos="1" step="0.1" min="0.1" width="100%" />
+            </hbox>
+            <hbox width="100%" tooltip="If true, the note is a pixel sprite, and\nwill be rendered without anti-aliasing." verticalAlign="center" >
+                <label text="Is Note Pixel?" />
+                <checkbox id="notestyleNotePixel" width="100%" verticalAlign="center" />
+            </hbox>
         </grid>
 
-        <grid columns="2" tooltip="If true, the note is a pixel sprite, and\nwill be rendered without anti-aliasing." width="100%">
-            <label text="Is Note Pixel?" verticalAlign="center" />
-            <checkbox id="notestyleNotePixel" width="100%" verticalAlign="center" />
+        <grid columns="2" width="100%" tooltip="Offset the sprite's position by this amount." >
+            <hbox width="100%" verticalAlign="center" >
+                <label text="Offset X" />
+                <number-stepper id="notestyleNoteOffsetX" style="font-size: 10px" pos="0" step="0.5" width="100%" />
+            </hbox>
+            <hbox width="100%" verticalAlign="center" >
+                <label text="Offset Y" />
+                <number-stepper id="notestyleNoteOffsetY" style="font-size: 10px" pos="0" step="0.5" width="100%" />
+            </hbox>
         </grid>
 
-        <grid columns="2" tooltip="The alpha to render the note at." width="100%">
-            <label text="Note Alpha" verticalAlign="center" />
-            <number-stepper id="notestyleNoteAlpha" style="font-size: 10px" pos="1" step="0.1" min="0.1" max="1.0" width="100%" />
-        </grid>
-
-        <grid columns="2" tooltip="If true, animations will be played on the graphic.\nDefault is false to save performance." width="100%">
-            <label text="Is Note Animated?" verticalAlign="center" />
-            <checkbox id="notestyleNoteAnimated" width="100%" verticalAlign="center" />
-        </grid>
     </vbox>
 
     <menu-separator />
 
     <vbox width="100%">
         <label text="Note Data" style="font-size: 17px" verticalAlign="center" horizontalAlign="center" />
-        <grid columns="2" tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteLeft'." width="100%">
-            <label text="Left Note Prefix" verticalAlign="center" />
-            <textfield id="notestyleLeftNotePrefix" placeholder="Prefix defined by XML file." width="100%" />
+        <grid columns="2" width="100%">
+            <hbox tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteLeft'." width="100%" >
+               <label text="Left Prefix" verticalAlign="center" />
+                <textfield id="notestyleLeftNotePrefix" placeholder="Prefix..." width="100%" /> 
+            </hbox>
+            <hbox tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteDown'." width="100%" >
+                <label text="Down Prefix" verticalAlign="center" />
+                <textfield id="notestyleDownNotePrefix" placeholder="Prefix..." width="100%" />
+            </hbox>
         </grid>
-        <grid columns="2" tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteDown'." width="100%">
-            <label text="Down Note Prefix" verticalAlign="center" />
-            <textfield id="notestyleDownNotePrefix" placeholder="Prefix defined by XML file." width="100%" />
-        </grid>
-        <grid columns="2" tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteUp'." width="100%">
-            <label text="Up Note Prefix" verticalAlign="center" />
-            <textfield id="notestyleUpNotePrefix" placeholder="Prefix defined by XML file." width="100%" />
-        </grid>
-        <grid columns="2" tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteRight'." width="100%">
-            <label text="Right Note Prefix" verticalAlign="center" />
-            <textfield id="notestyleRightNotePrefix" placeholder="Prefix defined by XML file." width="100%" />
+        <grid columns="2" width="100%">
+            <hbox tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteUp'." width="100%" >
+                <label text="Up Prefix" verticalAlign="center" />
+                <textfield id="notestyleUpNotePrefix" placeholder="Prefix..." width="100%" />
+            </hbox>
+            <hbox tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteRight'." width="100%" >
+                <label text="Right Prefix" verticalAlign="center" />
+                <textfield id="notestyleRightNotePrefix" placeholder="Prefix..." width="100%" />
+            </hbox>
         </grid>
     </vbox>
 </window>

@@ -87,7 +87,7 @@ class NotestyleEditor extends MusicBeatState
     var testStrumline:Strumline;
     var currentNoteStyleData:NoteStyle;
 
-    var options = new NotestyleEditorSettings();
+    var options = new NotestyleEditorSettings().options;
 
     var menuBar:MenuBar;
     var menubarItemNewNotestyle:MenuItem;
@@ -103,8 +103,7 @@ class NotestyleEditor extends MusicBeatState
 
     var _lastDirection:Int = 0;
     var isTesting:Bool = false;
-
-    var msPerBeat:Float = 600;
+    var msPerBeat:Float = 60000 / 100;
 
     public function new()
     {
@@ -117,12 +116,13 @@ class NotestyleEditor extends MusicBeatState
 
         var chartEditor = new ChartEditorState();
 
-        FunkinSound.playMusic('offsetsLoop', {startingVolume: 0, overrideExisting: true, restartTrack: false, persist: true, loop: true});
+        FunkinSound.playMusic(options.editorSong.id, {startingVolume: 0, overrideExisting: true, restartTrack: false, persist: true, loop: true});
         FlxG.sound.music.fadeIn(0.5, 0, 1);
 
         WindowUtil.setWindowTitle("Friday Night Funkin' - anysad Notestyle Editor");
 
         _lastDirection = 0;
+        msPerBeat = 60000 / get_conductorInUse().bpm;
 
         var bg = new FunkinSprite(0, 0).loadGraphic(Paths.image('menuDesat'));
 		bg.scrollFactor.set(0, 0);
@@ -175,20 +175,20 @@ class NotestyleEditor extends MusicBeatState
         add(notestyleDataWindow);
 
         notestyleDataWindow.x = 5;
-        notestyleDataWindow.y = menuBar.height + 5;
+        notestyleDataWindow.y = 60;
 
         notestyleNoteDataWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/windows/notestyleNoteDataWindow'));
         notestyleNoteDataWindow.windowManager = windowManager;
         add(notestyleNoteDataWindow);
 
         notestyleNoteDataWindow.x = 5;
-        notestyleNoteDataWindow.y = menuBar.height + notestyleDataWindow.height + 5;
+        notestyleNoteDataWindow.y = 339;
     }
 
     function update(elapsed:Float):Void
     {
         super.update(elapsed);
-        get_conductorInUse().update(get_conductorInUse().songPosition + elapsed * 1000, false);
+        get_conductorInUse().update();
 
         handleKeybinds();
 
@@ -198,15 +198,11 @@ class NotestyleEditor extends MusicBeatState
     function beatHit()
     {
         super.beatHit();
-
-        trace('BEAT HIT!');
         
         if (isTesting)
         {
-            var length = menubarItemTestNotestyleHold.selected ? 600 : 0;
-            var data:SongNoteDataRaw = new SongNoteDataRaw((get_conductorInUse().currentBeat + 3) * msPerBeat, _lastDirection, length, null, null);
+            var data:SongNoteDataRaw = new SongNoteDataRaw((get_conductorInUse().currentBeat + 4) * msPerBeat, _lastDirection, menubarItemTestNotestyleHold.selected ? 600 : 0, null, null);
             testStrumline.addNoteData(data, false);
-
             _lastDirection = (_lastDirection + 1) % 4;
         }
     }
