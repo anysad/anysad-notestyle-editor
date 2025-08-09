@@ -1,5 +1,6 @@
-<window title="Notestyle Note Data" width="300" maximizable="false" minimizable="false" closable="false">
+<window title="Notestyle Note Data" width="350" maximizable="false" minimizable="false" closable="false">
     <vbox width="100%">
+        <label text="General Information" style="font-size: 17px" verticalAlign="center" horizontalAlign="center" />
         <grid columns="2" tooltip="The image to use for the asset.\nMay be a Sparrow sprite sheet." width="100%">
             <label text="Asset Path" verticalAlign="center" />
             <textfield id="notestyleNoteAssetPath" placeholder="Image to use as an asset." width="100%" />
@@ -27,4 +28,24 @@
     </vbox>
 
     <menu-separator />
+
+    <vbox width="100%">
+        <label text="Note Data" style="font-size: 17px" verticalAlign="center" horizontalAlign="center" />
+        <grid columns="2" tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteLeft'." width="100%">
+            <label text="Left Note Prefix" verticalAlign="center" />
+            <textfield id="notestyleLeftNotePrefix" placeholder="Prefix defined by XML file." width="100%" />
+        </grid>
+        <grid columns="2" tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteDown'." width="100%">
+            <label text="Down Note Prefix" verticalAlign="center" />
+            <textfield id="notestyleDownNotePrefix" placeholder="Prefix defined by XML file." width="100%" />
+        </grid>
+        <grid columns="2" tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteUp'." width="100%">
+            <label text="Up Note Prefix" verticalAlign="center" />
+            <textfield id="notestyleUpNotePrefix" placeholder="Prefix defined by XML file." width="100%" />
+        </grid>
+        <grid columns="2" tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteRight'." width="100%">
+            <label text="Right Note Prefix" verticalAlign="center" />
+            <textfield id="notestyleRightNotePrefix" placeholder="Prefix defined by XML file." width="100%" />
+        </grid>
+    </vbox>
 </window>
