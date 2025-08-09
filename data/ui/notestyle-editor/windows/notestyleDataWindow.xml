@@ -22,7 +22,7 @@
 
     <menu-separator />
 
-    <!-- <hbox width="100%" >
+    <hbox width="100%" >
       <button id="openNoteEditorButton" text="Note Editor" width="50%" />
       <button id="openStrumlineEditorButton" text="Strumline Editor" width="50%" />
     </hbox>
@@ -30,7 +30,7 @@
       <button id="openSplashEditorButton" text="Note Splash Editor" width="100%" />
       <button id="openHoldCoverEditorButton" text="Note Cover Editor" width="100%" />
     </hbox>
-    <hbox width="100%">
+    <!-- <hbox width="100%">
       <button id="openCountdownEditorButton" text="Countdown / Sounds" width="100%" />
       <button id="openJudgementEditorButton" text="Judgements / Combo" width="100%" />
     </hbox> -->

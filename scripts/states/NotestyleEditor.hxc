@@ -76,28 +76,27 @@ class NotestyleEditor extends MusicBeatState
     var windowManager = new WindowManager();
     var notificationManager = new NotificationManager();
 
-    var drumsBG:FunkinSound;
-
     var testStrumline:Strumline;
     var currentNoteStyleData:NoteStyle;
 
-    var menuBar:MenuBar;
-    var saveNotestyleMenuItem:MenuItem;
-    var menubarTestCheckbox:MenuCheckBox;
+    var drumsBG:FunkinSound;
 
-    var localConductor:Conductor;
-    var arrowBeat:Float = 0;
+    var menuBar:MenuBar;
+    var menubarItemNewNotestyle:MenuItem;
+    var menubarItemSaveNotestyle:MenuItem;
+    var menubarItemExit:MenuItem;
+    var menubarItemTestNotestyle:MenuCheckBox;
+    var menubarItemTestNotestyleHold:MenuCheckBox;
+    var menubarItemUserGuide:MenuItem;
+
+    var notestyleDataWindow:Window;
+    var notestyleNoteDataWindow:Window;
+    var userGuideWindow:Window;
+
     var _lastDirection:Int = 0;
-    var _lastBeat:Float = 0;
-    var _lastTime:Float = 0;
-    var resyncTimer:Float = 0;
     var isTesting:Bool = false;
 
-    var msPerBeat(get, never):Float;
-    function get_msPerBeat():Float
-    {
-        return 60000 / 100;
-    }
+    var msPerBeat:Float = 600;
 
     public function new()
     {
@@ -109,26 +108,11 @@ class NotestyleEditor extends MusicBeatState
         super.create();
 
         var chartEditor = new ChartEditorState();
-        localConductor = new Conductor();
-        localConductor.forceBPM(100);
 
-        drumsBG = FunkinSound.load(Paths.music('offsetsLoop/drumsLoop'), 0, true, false, false, false);
 
-        FlxG.sound.music.fadeOut(0.5, 0, function(tw) {
-            FunkinSound.playMusic('offsetsLoop',
-            {
-                startingVolume: 0,
-                overrideExisting: true,
-                restartTrack: true,
-                loop: true
-            });
-            drumsBG.play(true);
-            FlxG.sound.music.fadeIn(1, 1);
-        });
+        FunkinSound.playMusic('offsetsLoop', {startingVolume: 0, overrideExisting: true, restartTrack: false, persist: true, loop: true});
+        FlxG.sound.music.fadeIn(0.5, 0, 1);
 
-        var floored = Math.floor(localConductor.currentBeatTime);
-        arrowBeat = floored - (floored % 4);
-        arrowBeat += 4;
         _lastDirection = 0;
 
         var bg = new FunkinSprite(0, 0).loadGraphic(Paths.image('menuDesat'));
@@ -154,8 +138,6 @@ class NotestyleEditor extends MusicBeatState
         testStrumline.y = Preferences.downscroll ? FlxG.height - testStrumline.height - Constants.STRUMLINE_Y_OFFSET - noteStyle.getStrumlineOffsets()[1] : Constants.STRUMLINE_Y_OFFSET + 40;
         testStrumline.isDownscroll = Preferences.downscroll;
         testStrumline.scrollFactor.set(0, 0);
-        testStrumline.conductorInUse = localConductor;
-        // testStrumline.remove(testStrumline.background);
         add(testStrumline);
 
         testStrumline.clean();
@@ -165,32 +147,19 @@ class NotestyleEditor extends MusicBeatState
         menuBar = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/menubar'));
         add(menuBar);
 
-        menubarTestCheckbox = menuBar.findComponent('menubarTestCheckbox');
-        trace(menubarTestCheckbox);
-        menubarTestCheckbox.onChange = (event) -> {
-            if (menubarTestCheckbox.selected)
-            {
-                var floored = Math.floor(localConductor.currentBeatTime);
-                arrowBeat = floored - (floored % 4);
-                arrowBeat += 4;
-                _lastDirection = 0;
-                isTesting = true;
+        menubarItemTestNotestyle = menuBar.findComponent('menubarItemTestNotestyle');
+        menubarItemTestNotestyle.onChange = (event) -> {
+            _lastDirection = 0;
 
-                drumsBG.pause();
-                drumsBG.time = FlxG.sound.music.time;
-                drumsBG.resume();
-                localConductor.update(FlxG.sound.music.time, true);
-                drumsBG.fadeIn(1, 0, 1);
-            }
-            else
-            {
-                isTesting = false;
-                testStrumline.clean();
-                testStrumline.noteData = [];
-                testStrumline.nextNoteIndex = 0;
-                drumsBG.fadeOut(1, 0);
-            }
+            testStrumline.clean();
+            testStrumline.noteData = [];
+            testStrumline.nextNoteIndex = 0;
+
+            if (menubarItemTestNotestyle.selected) isTesting = true;
+            else isTesting = false;
         }
+
+        menubarItemTestNotestyleHold = menuBar.findComponent('menubarItemTestNotestyleHold');
 
         notestyleDataWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/windows/notestyleDataWindow'));
         notestyleDataWindow.windowManager = windowManager;
@@ -210,71 +179,33 @@ class NotestyleEditor extends MusicBeatState
     function update(elapsed:Float):Void
     {
         super.update(elapsed);
-        localConductor.update(localConductor.songPosition + elapsed * 1000, false);
+        get_conductorInUse().update(get_conductorInUse().songPosition + elapsed * 1000, false);
 
         handleKeybinds();
 
-        if (FlxG.sound.music.time < _lastTime)
-        {
-            localConductor.update(FlxG.sound.music.time, false);
-            arrowBeat = 4;
+        processNotes(elapsed);
+    }
 
-            testStrumline.clean();
-            testStrumline.noteData = [];
-            testStrumline.nextNoteIndex = 0;
-        }
+    function beatHit()
+    {
+        super.beatHit();
 
-        _lastBeat = localConductor.currentBeatTime;
-
-        resyncTimer += elapsed;
-        if (resyncTimer >= 0.5)
-        {
-            var diff:Float = Math.abs((FlxG.sound.music.time + localConductor.combinedOffset) - localConductor.songPosition);
-            var diffBg:Float = Math.abs(FlxG.sound.music.time - drumsBG.time);
-            if (diff > 50 || diffBg > 50)
-            {
-                trace('Resyncing conductor: ' + (diff > diffBg ? diff : diffBg) + 'ms difference');
-
-                // If the difference is greater than 50ms, we resync the conductor.
-                localConductor.update(FlxG.sound.music.time, true);
-                drumsBG.pause();
-                drumsBG.time = FlxG.sound.music.time;
-                drumsBG.resume();
-                localConductor.currentBeatTime = localConductor.currentBeatTime;
-                _lastBeat = localConductor.currentBeatTime;
-            }
-            resyncTimer = 0;
-        }
-
-        _lastTime = FlxG.sound.music.time;
-
-        processNotes();
-
+        trace('BEAT HIT!');
+        
         if (isTesting)
         {
-            while (localConductor.currentBeatTime >= arrowBeat - 2 && localConductor.currentBeatTime < 124)
-            {
-                arrowBeat = arrowBeat + 1;
-                var data:SongNoteDataRaw = new SongNoteDataRaw(arrowBeat * msPerBeat, _lastDirection, 0, null, null);
-                testStrumline.addNoteData(data, false);
+            var length = menubarItemTestNotestyleHold.selected ? 600 : 0;
+            var data:SongNoteDataRaw = new SongNoteDataRaw((get_conductorInUse().currentBeat + 3) * msPerBeat, _lastDirection, length, null, null);
+            testStrumline.addNoteData(data, false);
 
-                _lastDirection = (_lastDirection + 1) % 4; // Cycle through directions 0-3
-            }
-
-            if (localConductor.currentBeatTime >= 124 && _lastDirection != 0) _lastDirection = 0; // reset direction on loop
-        }
-
-        for (note in testStrumline.notes.members)
-        {
-            if (note == null || !note.alive) continue;
-            var isOffscreen:Bool = testStrumline.isDownscroll ? note.y > FlxG.height : note.y < -note.height;
-            if (isOffscreen) testStrumline.killNote(note);
+            _lastDirection = (_lastDirection + 1) % 4;
         }
     }
 
     function handleKeybinds():Void
     {
         if (pressingControl() && FlxG.keys.justPressed.Q) FlxG.switchState(() -> new MainMenuState());
+        if (FlxG.keys.justPressed.F1) openUserGuide();
         if (FlxG.keys.justPressed.P) trace(menubarTestCheckbox.value);
         // if (FlxG.keys.justPressed.T)
         // {
@@ -291,29 +222,38 @@ class NotestyleEditor extends MusicBeatState
         // }
     }
 
+    function openUserGuide():Void
+    {
+        if (userGuideWindow == null || !userGuideWindow.visible)
+        {
+            userGuideWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/dialogs/user-guide'));
+            userGuideWindow.windowManager = windowManager;
+            userGuideWindow.screenCenter();
+            add(userGuideWindow);
+        }
+        else windowManager.closeWindow(userGuideWindow);
+    }
+
     function pressingControl():Bool
     {
         return FlxG.keys.pressed.CONTROL || FlxG.keys.pressed.WINDOWS;
     }
 
-    function processNotes():Void
+    function processNotes(elapsed:Float):Void
     {
         if (testStrumline?.notes?.members == null) return;
 
         for (note in testStrumline.notes.members)
         {
             if (note == null) continue;
-            var r = GRhythmUtil.processWindow(note, false, localConductor);
+            var r = GRhythmUtil.processWindow(note, false);
             if (r.botplayHit)
             {
                 var event:NoteScriptEvent = new HitNoteScriptEvent(note, 0.0, 0, 'perfect', false, 0);
-                dispatchEvent(event);
-
-                if (event.eventCanceled) continue;
 
                 // Command the opponent to hit the note on time.
                 // NOTE: This is what handles the strumline and cleaning up the note itself!
-                testStrumline.hitNote(note);
+                testStrumline.hitNote(note, true);
                 testStrumline.playNoteSplash(note.noteData.getDirection());
 
                 if (note.holdNoteSprite != null) testStrumline.playNoteHoldCover(note.holdNoteSprite);

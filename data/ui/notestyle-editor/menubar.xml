@@ -8,23 +8,23 @@
   </style>
 
   <menu text="File">
-    <menu-item id="newNotestyleMenuItem" text="New" shortcutText="Ctrl + N" />
+    <menu-item id="menubarItemNewNotestyle" text="New Notestyle" shortcutText="Ctrl + N" />
     <menu-separator />
-    <menu-item id="saveNotestyleMenuItem" text="Save" shortcutText="Ctrl + S"/>
+    <menu-item id="menubarItemSaveNotestyle" text="Save Notestyle" shortcutText="Ctrl + S"/>
     <menu-separator />
-    <menu-item id="exitToMenu" text="Exit To Menu" shortcutText="Ctrl + Q" />
+    <menu-item id="menubarItemExit" text="Exit To Menu" shortcutText="Ctrl + Q" />
   </menu>
   <menu text="Windows">
-    <menu-item id="notestyleDataWindow" text="Notestyle Data" />
-    <menu-item id="songDataWindow" text="Song Data" />
+    <menu-item id="menubarItemNotestyleDataWindow" text="Notestyle Data" />
   </menu>
 
   <menu text="Testing">
-    <menu-checkbox id="menubarTestCheckbox" text="Test Notestyle" tooltip="Test the notestyle by displaying oncoming notes,\nshowing splashes and hold note covers." />
+    <menu-checkbox id="menubarItemTestNotestyle" text="Test Notestyle" tooltip="Test the notestyle by displaying oncoming notes,\nshowing splashes and hold note covers." />
+    <menu-checkbox id="menubarItemTestNotestyleHold" text="Hold Notes" tooltip="Turn normal notes into hold notes in order to display hold note covers." />
   </menu>
 
   <menu text="Help">
-    <menu-item id="userGuide" text="User Guide" shortcutText="F1" />
+    <menu-item id="menubarItemUserGuide" text="User Guide" shortcutText="F1" />
     <menu-item id="checkForUpdates" text="Check for Updates" />
   </menu>
 
