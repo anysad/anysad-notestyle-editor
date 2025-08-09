@@ -13,15 +13,22 @@ import funkin.Conductor;
 import funkin.ui.MusicBeatState;
 import funkin.ui.mainmenu.MainMenuState;
 import funkin.ui.debug.charting.ChartEditorState;
+import funkin.ui.transition.LoadingState;
 import funkin.graphics.FunkinSprite;
 import funkin.input.Cursor;
 import funkin.audio.FunkinSound;
 import funkin.util.FileUtil;
+import funkin.util.DeviceUtil;
 import funkin.util.ReflectUtil;
 import funkin.util.Constants;
 import funkin.util.GRhythmUtil;
+import funkin.util.WindowUtil;
 import funkin.data.notestyle.NoteStyleRegistry;
 import funkin.data.song.SongNoteDataRaw;
+import funkin.data.song.SongRegistry;
+import funkin.play.PauseSubState;
+import funkin.play.PlayState;
+import funkin.play.song.Song;
 import funkin.play.notes.notestyle.NoteStyle;
 import funkin.play.notes.notekind.NoteKindManager;
 import funkin.play.notes.NoteSplash;
@@ -109,9 +116,10 @@ class NotestyleEditor extends MusicBeatState
 
         var chartEditor = new ChartEditorState();
 
-
         FunkinSound.playMusic('offsetsLoop', {startingVolume: 0, overrideExisting: true, restartTrack: false, persist: true, loop: true});
         FlxG.sound.music.fadeIn(0.5, 0, 1);
+
+        WindowUtil.setWindowTitle("Friday Night Funkin' - anysad Notestyle Editor");
 
         _lastDirection = 0;
 
@@ -131,11 +139,11 @@ class NotestyleEditor extends MusicBeatState
             remove(testStrumline);
         }
 
-        var style = new NoteStyle('pixel');
+        var style = new NoteStyle('funkin');
         currentNoteStyleData = style;
-        testStrumline = new Strumline(style);
+        testStrumline = new Strumline(currentNoteStyleData);
         testStrumline.screenCenter();
-        testStrumline.y = Preferences.downscroll ? FlxG.height - testStrumline.height - Constants.STRUMLINE_Y_OFFSET - noteStyle.getStrumlineOffsets()[1] : Constants.STRUMLINE_Y_OFFSET + 40;
+        testStrumline.y = Preferences.downscroll ? FlxG.height - testStrumline.height - Constants.STRUMLINE_Y_OFFSET - currentNoteStyleData.getStrumlineOffsets()[1] : Constants.STRUMLINE_Y_OFFSET + 40;
         testStrumline.isDownscroll = Preferences.downscroll;
         testStrumline.scrollFactor.set(0, 0);
         add(testStrumline);
@@ -206,20 +214,21 @@ class NotestyleEditor extends MusicBeatState
     {
         if (pressingControl() && FlxG.keys.justPressed.Q) FlxG.switchState(() -> new MainMenuState());
         if (FlxG.keys.justPressed.F1) openUserGuide();
-        if (FlxG.keys.justPressed.P) trace(menubarTestCheckbox.value);
-        // if (FlxG.keys.justPressed.T)
-        // {
-        //     if (currentNoteStyleData._data.assets.note.assetPath == "shared:notes")
-        //     {
-        //         currentNoteStyleData._data.assets.note.assetPath = "week6:weeb/pixelUI/arrows-pixels";
-        //     }
-        //     else if (currentNoteStyleData._data.assets.note.assetPath == "week6:weeb/pixelUI/arrows-pixels")
-        //     {
-        //         currentNoteStyleData._data.assets.note.assetPath = "shared:notes";
-        //     }
+        if (FlxG.keys.justPressed.T)
+        {
+            var noteAssetPath = currentNoteStyleData._data.assets.note.assetPath;
+            var image = Paths.image(Paths.stripLibrary(noteAssetPath), currentNoteStyleData.getAssetLibrary(noteAssetPath));
+            if (currentNoteStyleData._data.assets.note.assetPath == "shared:notes")
+            {
+                currentNoteStyleData._data.assets.note.assetPath = "week6:weeb/pixelUI/arrows-pixels";
+            }
+            else if (currentNoteStyleData._data.assets.note.assetPath == "week6:weeb/pixelUI/arrows-pixels")
+            {
+                currentNoteStyleData._data.assets.note.assetPath = "shared:notes";
+            }
 
-        //     // updateRegularNotes();
-        // }
+            updateRegularNotes(testStrumline, currentNoteStyleData);
+        }
     }
 
     function openUserGuide():Void
@@ -261,69 +270,80 @@ class NotestyleEditor extends MusicBeatState
         }
     }
 
-    // function updateStrumlineNotes(strumline:Strumline, noteStyle:NoteStyle):Void
-    // {
-    //     strumline.noteStyle = noteStyle;
+    function updateStrumlineNotes(strumline:Strumline, noteStyle:NoteStyle):Void
+    {
+        strumline.noteStyle = noteStyle;
 
-	// 	for (i in 0...Strumline.KEY_COUNT)
-    //     {
-	// 		strumline.strumlineNotes.members[i].kill();
-	// 		strumline.strumlineNotes.remove(strumline.strumlineNotes.members[i]);
+		for (i in 0...Strumline.KEY_COUNT)
+        {
+			strumline.strumlineNotes.members[i].kill();
+			strumline.strumlineNotes.remove(strumline.strumlineNotes.members[i]);
 
-	// 		var child:StrumlineNote = new StrumlineNote(noteStyle, strumline.isPlayer, Strumline.DIRECTIONS[i]);
-	// 		child.x = strumline.getXPos(Strumline.DIRECTIONS[i]);
-	// 		child.x += Strumline.INITIAL_OFFSET;
-	// 		child.y = 0;
+			var child:StrumlineNote = new StrumlineNote(noteStyle, strumline.isPlayer, Strumline.DIRECTIONS[i]);
+			child.x = strumline.getXPos(Strumline.DIRECTIONS[i]);
+			child.x += Strumline.INITIAL_OFFSET;
+			child.y = 0;
 
-	// 		noteStyle.applyStrumlineOffsets(child);
-	// 		strumline.strumlineNotes.add(child);
-	// 	}
-    // }
+			noteStyle.applyStrumlineOffsets(child);
+			strumline.strumlineNotes.add(child);
+		}
+    }
 
-    // function updateRegularNotes():Void
-    // {
-    //     testStrumline.noteStyle = currentNoteStyleData;
-	// 	testStrumline.noteSplashes.clear();
-    //     currentNoteStyleData.noteFrames = null; // Clear cache
+    function updateRegularNotes(strumline:Strumline, noteStyle:NoteStyle):Void
+    {
+        strumline.noteStyle = noteStyle;
+		strumline.noteSplashes.clear();
+        noteStyle.noteFrames = null; // Clear cache
 
-    //     for (note in testStrumline.notes.members)
-    //     {
-    //         if (note == null) continue;
-    //         note.setupNoteGraphic(currentNoteStyleData);
-    //         note.playNoteAnimation(note.noteData.getDirection());
+        for (note in strumline.notes.members)
+        {
+            if (note == null) continue;
+            note.setupNoteGraphic(noteStyle);
+            note.playNoteAnimation(note.noteData.getDirection());
 
-    //         note.x = testStrumline.x;
-    //         note.x += testStrumline.getXPos(Strumline.DIRECTIONS[note.noteData.getDirection() % Strumline.KEY_COUNT]);
-    //         note.x -= (note.width - Strumline.STRUMLINE_SIZE) / 2;
-    //         note.x -= 2.0;
-    //     }
-    // }
+            note.x = strumline.x;
+            note.x += strumline.getXPos(Strumline.DIRECTIONS[note.noteData.getDirection() % Strumline.KEY_COUNT]);
+            note.x -= (note.width - Strumline.STRUMLINE_SIZE) / 2;
+            note.x -= 2.0;
+        }
+    }
 
-    // function updateHoldNotes():Void
-    // {
-    //     testStrumline.noteStyle = currentNoteStyleData;
-	// 	testStrumline.noteHoldCovers.clear();
+    function updateHoldNotes(strumline:Strumline, noteStyle:NoteStyle):Void
+    {
+        strumline.noteStyle = noteStyle;
+		strumline.noteHoldCovers.clear();
 
-    //     for (note in testStrumline.notes)
-    //     {
-    //         if (note.get_isHoldNote())
-    //         {
-    //             note.holdNoteSprite.setupHoldNoteGraphic(noteStyle);
-    //             note.holdNoteSprite.noteStyleOffsets = noteStyle.getHoldNoteOffsets();
-    //             note.holdNoteSprite.graphicWidth = note.holdNoteSprite.graphic.width / 8 * note.holdNoteSprite.zoom;
-    //             note.holdNoteSprite.graphicHeight = note.holdNoteSprite.sustainLength * Constants.PIXELS_PER_MS * strumline?.scrollSpeed ?? 1.0;
+        for (note in strumline.notes)
+        {
+            if (note.get_isHoldNote())
+            {
+                note.holdNoteSprite.setupHoldNoteGraphic(noteStyle);
+                note.holdNoteSprite.noteStyleOffsets = noteStyle.getHoldNoteOffsets();
+                note.holdNoteSprite.graphicWidth = note.holdNoteSprite.graphic.width / 8 * note.holdNoteSprite.zoom;
+                note.holdNoteSprite.graphicHeight = note.holdNoteSprite.sustainLength * Constants.PIXELS_PER_MS * strumline?.scrollSpeed ?? 1.0;
 
-    //             note.holdNoteSprite.updateHitbox();
-    //             note.holdNoteSprite.updateClipping();
-    //             note.holdNoteSprite.updateColorTransform();
+                note.holdNoteSprite.updateHitbox();
+                note.holdNoteSprite.updateClipping();
+                note.holdNoteSprite.updateColorTransform();
 
-    //             note.holdNoteSprite.x = testStrumline.x;
-    //             note.holdNoteSprite.x += testStrumline.getXPos(Strumline.DIRECTIONS[note.noteData.getDirection() % Strumline.KEY_COUNT]);
-    //             note.holdNoteSprite.x += Strumline.STRUMLINE_SIZE / 2;
-    //             note.holdNoteSprite.x -= note.holdNoteSprite.graphicWidth / 2;
+                note.holdNoteSprite.x = strumline.x;
+                note.holdNoteSprite.x += strumline.getXPos(Strumline.DIRECTIONS[note.noteData.getDirection() % Strumline.KEY_COUNT]);
+                note.holdNoteSprite.x += Strumline.STRUMLINE_SIZE / 2;
+                note.holdNoteSprite.x -= note.holdNoteSprite.graphicWidth / 2;
 
-    //             if (note.holdNoteSprite.hitNote) testStrumline.playNoteHoldCover(note.holdNoteSprite);
-    //         }
-    //     }
-    // }
+                if (note.holdNoteSprite.hitNote) strumline.playNoteHoldCover(note.holdNoteSprite);
+            }
+        }
+    }
+
+    function doesFileExist(filePath:String):Bool
+    {
+        return Assets.exists(filePath);
+    }
+
+    function destroy()
+    {
+        super.destroy();
+        WindowUtil.setWindowTitle("Friday Night Funkin'");
+    }
 }
