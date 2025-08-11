@@ -1,33 +1,183 @@
-<window title="Notestyle Data" width="350" maximizable="false" minimizable="false" closable="false">
-    <vbox width="100%">
-        <dropdown id="notestyleDropdown" text="Select Notestyle" width="100%" searchable="true" />
-    </vbox>
+<window title="Notestyle Data" width="380" height="350" maximizable="false" minimizable="false" closable="false">
+    <tabview id="notestyleDataTabview" width="100%" height="100%">
+        <box width="100%" height="100%" text="Basics">
+            <vbox width="100%" height="100%">
+                <dropdown id="notestyleDropdown" text="Select Notestyle" width="100%" searchable="true" />
 
-    <menu-separator />
+                <menu-separator />
 
-    <vbox width="100%">
-        <grid columns="2" tooltip="The readable title of the notestyle." width="100%">
-            <label text="Name" verticalAlign="center" />
-            <textfield id="notestyleName" placeholder="Readable name of the notestyle." width="100%" />
-        </grid>
-        <grid columns="2" tooltip="The author of the notestyle." width="100%">
-            <label text="Artist" verticalAlign="center" />
-            <textfield id="notestyleArtist" placeholder="The author of the notestyle." width="100%" />
-        </grid>
-        <grid columns="2" tooltip="The note style to use as a fallback/parent." width="100%">
-            <label text="Fallback" verticalAlign="center" />
-            <dropdown id="notestyleFallback" text="Select Fallback" width="100%" />
-        </grid>
-    </vbox>
+                <grid columns="2" tooltip="The readable title of the notestyle." width="100%">
+                    <label text="Name" verticalAlign="center" />
+                    <textfield id="notestyleName" placeholder="Readable name of the notestyle." width="100%" />
+                </grid>
+                <grid columns="2" tooltip="The author of the notestyle." width="100%">
+                    <label text="Artist" verticalAlign="center" />
+                    <textfield id="notestyleArtist" placeholder="The author of the notestyle." width="100%" />
+                </grid>
+                <grid columns="2" tooltip="The note style to use as a fallback/parent." width="100%">
+                    <label text="Fallback" verticalAlign="center" />
+                    <dropdown id="notestyleFallback" text="Select Fallback" width="100%" />
+                </grid>
+            </vbox>
+        </box>
 
-    <menu-separator />
 
-    <hbox width="100%" >
-      <button id="openNoteEditorButton" text="Note" width="50%" />
-      <button id="openHoldNoteEditorButton" text="Hold Note" width="50%" />
-    </hbox>
-    <hbox width="100%">
-      <button id="openStrumlineEditorButton" text="Strumline" width="50%" />
-      <button id="openSplashCoverEditorButton" text="Note Splash/Cover" width="50%" />
-    </hbox>
+
+        <box width="100%" height="100%" text="Notes">
+            <vbox width="100%">
+                <grid columns="2" tooltip="The image to use for the asset.\nMay be a Sparrow sprite sheet." width="100%">
+                    <label text="Asset Path" verticalAlign="center" />
+                    <textfield id="notestyleNoteAssetPath" placeholder="Image to use as an asset." width="100%" />
+                </grid>
+
+                <grid columns="2" width="100%">
+                    <hbox width="100%" tooltip="The scale to render the note at." verticalAlign="center" >
+                        <label text="Scale" verticalAlign="center" />
+                        <number-stepper id="notestyleNoteScale" style="font-size: 10px" pos="1" step="0.1" min="0.1" width="100%" />
+                    </hbox>
+                    <hbox width="100%" tooltip="If true, the note is a pixel sprite, and\nwill be rendered without anti-aliasing." verticalAlign="center" >
+                        <label text="Is Note Pixel?" verticalAlign="center" />
+                        <checkbox id="notestyleNotePixel" width="100%" verticalAlign="center" />
+                    </hbox>
+                </grid>
+
+                <grid columns="2" width="100%" tooltip="Offset the sprite's position by this amount." >
+                    <hbox width="100%" verticalAlign="center" >
+                        <label text="Offset X" verticalAlign="center" />
+                        <number-stepper id="notestyleNoteOffsetX" style="font-size: 10px" pos="0" step="0.5" width="100%" />
+                    </hbox>
+                    <hbox width="100%" verticalAlign="center" >
+                        <label text="Offset Y" verticalAlign="center" />
+                        <number-stepper id="notestyleNoteOffsetY" style="font-size: 10px" pos="0" step="0.5" width="100%" />
+                    </hbox>
+                </grid>
+
+                <menu-separator />
+
+                <label text="Note Data Prefixes" style="font-size: 17px" verticalAlign="center" horizontalAlign="center" />
+                <dropdown id="notestyleDropdown" text="Select Note Direction to modify" width="100%" searchable="true">
+                    <data>
+                        <item text="Left Note" id="notestyleLeftNotePrefix"/>
+                        <item text="Down Note" id="notestyleDownNotePrefix"/>
+                        <item text="Up Note" id="notestyleUpNotePrefix"/>
+                        <item text="Right Note" id="notestyleRightNotePrefix"/>
+                    </data>
+                </dropdown>
+                <grid columns="2" width="100%">
+                    <hbox tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for left note in 'Funkin' notestyle it's 'noteLeft'." width="100%" >
+                        <label text="Direction Note Prefic" verticalAlign="center" />
+                        <textfield id="notestyleDirectionNotePrefix" placeholder="Prefix" width="100%" /> 
+                    </hbox>
+                </grid>
+            </vbox>
+        </box>
+        
+
+
+        <box width="100%" height="100%" text="Hold Notes">
+            <vbox width="100%">
+                <grid columns="2" tooltip="The image to use for the asset.\nMay be a Sparrow sprite sheet." width="100%">
+                    <label text="Asset Path" verticalAlign="center" />
+                    <textfield id="notestyleHoldNoteAssetPath" placeholder="Image to use as an asset." width="100%" />
+                </grid>
+
+                <grid columns="2" width="100%">
+                    <hbox width="100%" tooltip="The scale to render the hold note at." verticalAlign="center" >
+                        <label text="Scale" verticalAlign="center" />
+                        <number-stepper id="notestyleHoldNoteScale" style="font-size: 10px" pos="1" step="0.1" min="0.1" width="100%" />
+                    </hbox>
+                    <hbox width="100%" tooltip="If true, the note is a pixel sprite, and\nwill be rendered without anti-aliasing." verticalAlign="center" >
+                        <label text="Is Hold Note Pixel?" verticalAlign="center" />
+                        <checkbox id="notestyleHoldNotePixel" width="100%" verticalAlign="center" />
+                    </hbox>
+                </grid>
+
+                <grid columns="2" width="100%" tooltip="Offset the sprite's position by this amount." >
+                    <hbox width="100%" verticalAlign="center" >
+                        <label text="Offset X" verticalAlign="center" />
+                        <number-stepper id="notestyleHoldNoteOffsetX" style="font-size: 10px" pos="0" step="0.5" width="100%" />
+                    </hbox>
+                    <hbox width="100%" verticalAlign="center" >
+                        <label text="Offset Y" verticalAlign="center" />
+                        <number-stepper id="notestyleHoldNoteOffsetY" style="font-size: 10px" pos="0" step="0.5" width="100%" />
+                    </hbox>
+                </grid>
+            </vbox>
+        </box>
+
+
+
+        <box width="100%" height="100%" text="Strumline Notes">
+            <vbox width="100%">
+                <grid columns="2" tooltip="The image to use for the asset.\nMay be a Sparrow sprite sheet." width="100%">
+                    <label text="Asset Path" verticalAlign="center" />
+                    <textfield id="notestyleStrumlineNoteAssetPath" placeholder="Image to use as an asset." width="100%" />
+                </grid>
+
+                <grid columns="2" width="100%">
+                    <hbox width="100%" tooltip="The scale to render the strumline note at." verticalAlign="center" >
+                        <label text="Scale" verticalAlign="center" />
+                        <number-stepper id="notestyleStrumlineNoteScale" style="font-size: 10px" pos="1" step="0.1" min="0.1" width="100%" />
+                    </hbox>
+                    <hbox width="100%" tooltip="If true, the note is a pixel sprite, and\nwill be rendered without anti-aliasing." verticalAlign="center" >
+                        <label text="Is Strumline Pixel?" verticalAlign="center" />
+                        <checkbox id="notestyleStrumlineNotePixel" width="100%" verticalAlign="center" />
+                    </hbox>
+                </grid>
+
+                <grid columns="2" width="100%" tooltip="Offset the sprite's position by this amount." >
+                    <hbox width="100%" verticalAlign="center" >
+                        <label text="Offset X" verticalAlign="center" />
+                        <number-stepper id="notestyleStrumlineNoteOffsetX" style="font-size: 10px" pos="0" step="0.5" width="100%" />
+                    </hbox>
+                    <hbox width="100%" verticalAlign="center" >
+                        <label text="Offset Y" verticalAlign="center" />
+                        <number-stepper id="notestyleStrumlineNoteOffsetY" style="font-size: 10px" pos="0" step="0.5" width="100%" />
+                    </hbox>
+                </grid>
+
+                <menu-separator />
+
+                <dropdown id="notestyleStrumlineNoteDropdown" text="Select Strumline Note to modify" width="100%" searchable="true">
+                    <data>
+                        <item text="Left Static" id="leftStatic" />
+                        <item text="Left Press" id="leftPress" />
+                        <item text="Left Confirm" id="leftConfirm" />
+                        <item text="Left Confirm Hold" id="leftConfirmHold" />
+
+                        <item text="Down Static" id="downStatic" />
+                        <item text="Down Press" id="downPress" />
+                        <item text="Down Confirm" id="downConfirm" />
+                        <item text="Down Confirm Hold" id="downConfirmHold" />
+
+                        <item text="Up Static" id="upStatic" />
+                        <item text="Up Press" id="upPress" />
+                        <item text="Up Confirm" id="upConfirm" />
+                        <item text="Up Confirm Hold" id="upConfirmHold" />
+
+                        <item text="Right Static" id="rightStatic" />
+                        <item text="Right Press" id="rightPress" />
+                        <item text="Right Confirm" id="rightConfirm" />
+                        <item text="Right Confirm Hold" id="rightConfirmHold" />
+                    </data>
+                </dropdown>
+
+                <hbox id="strumlineNoteDataFields" width="100%" verticalAlign="center" >
+                    <label id="strumlineNoteDataLabel" text="Note Prefix:" verticalAlign="center" />
+                </hbox>
+            </vbox>
+        </box>
+
+
+
+        <box width="100%" height="100%" text="Note Splashes">
+
+        </box>
+
+
+
+        <box width="100%" height="100%" text="Hold Note Covers">
+
+        </box>
+    </tabview>
 </window>

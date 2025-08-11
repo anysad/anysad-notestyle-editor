@@ -8,6 +8,7 @@ import flixel.math.FlxMath;
 import flixel.util.FlxSort;
 import flixel.util.FlxTimer;
 
+import funkin.Assets;
 import funkin.Preferences;
 import funkin.Conductor;
 import funkin.save.Save;
@@ -86,6 +87,7 @@ class NotestyleEditor extends MusicBeatState
     var currentNoteStyleData:NoteStyle;
 
     var options = new NotestyleEditorSettings();
+    var songList = [];
 
     // menubar
     var menuBar:MenuBar;
@@ -98,9 +100,7 @@ class NotestyleEditor extends MusicBeatState
 
     // windows
     var notestyleDataWindow:Window;
-    var notestyleNoteDataWindow:Window;
-    var notestyleHoldNoteDataWindow:Window;
-    var notestyleStrumlineNoteDataWindow:Window;
+    var notestyleDataTabview:TableView;
     var userGuideWindow:Window;
     var preferenceWindow:Window;
 
@@ -109,14 +109,10 @@ class NotestyleEditor extends MusicBeatState
     var notestyleName:TextField;
     var notestyleArtist:TextField;
     var notestyleFallback:DropDown;
-    var openNoteEditorButton:Button;
-    var openHoldNoteEditorButton:Button;
-    var openStrumlineEditorButton:Button;
-    var openSplashCoverEditorButton:Button;
 
-    // notestyleStrumlineNoteDataWindow UI
-    var notestyleStrumlineNoteDropdown:DropDown;
-    var strumlineNoteDataFields:HBox;
+    // preference UI
+    var preferencesMusic:DropDown;
+    var songMetaLabel:Label;
 
     var _lastDirection:Int = 0;
     var isTesting:Bool = false;
@@ -133,12 +129,11 @@ class NotestyleEditor extends MusicBeatState
 
         var chartEditor = new ChartEditorState();
 
-        FunkinSound.playMusic(options.data.editorSong.id, {startingVolume: 0, overrideExisting: true, restartTrack: false, persist: true, loop: true});
+        FunkinSound.playMusic(options.data.editorSong, {startingVolume: 0, overrideExisting: true, restartTrack: true, persist: true, loop: true});
         FlxG.sound.music.fadeIn(0.5, 0, 1);
 
         WindowUtil.setWindowTitle("Friday Night Funkin' - anysad Notestyle Editor");
 
-        _lastDirection = 0;
         msPerBeat = 60000 / get_conductorInUse().bpm;
 
         var bg = new FunkinSprite(0, 0).loadGraphic(Paths.image('menuDesat'));
@@ -157,6 +152,27 @@ class NotestyleEditor extends MusicBeatState
             remove(testStrumline);
         }
 
+        for (song in FileUtil.readDir('assets/music/'))
+        {
+            if (song == 'credits') continue;
+            var songMetadata = SongRegistry.instance.parseMusicData(song);
+            songList.push({
+                id: song,
+                metadata: songMetadata
+            });
+        }
+
+        for (song in FileUtil.readDir('assets/shared/music/'))
+        {
+            if (song == 'gameplay') continue;
+            var songMetadata = SongRegistry.instance.parseMusicData(song);
+            if (songMetadata == null) continue;
+            songList.push({
+                id: song,
+                metadata: songMetadata
+            });
+        }
+
         var style = new NoteStyle('funkin');
         currentNoteStyleData = style;
         testStrumline = new Strumline(currentNoteStyleData);
@@ -166,20 +182,14 @@ class NotestyleEditor extends MusicBeatState
         testStrumline.scrollFactor.set(0, 0);
         add(testStrumline);
 
-        testStrumline.clean();
-        testStrumline.noteData = [];
-        testStrumline.nextNoteIndex = 0;
+        cleanStrumlineData();
 
         menuBar = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/menubar'));
         add(menuBar);
 
         menubarItemTestNotestyle = menuBar.findComponent('menubarItemTestNotestyle');
         menubarItemTestNotestyle.onChange = (event) -> {
-            _lastDirection = 0;
-
-            testStrumline.clean();
-            testStrumline.noteData = [];
-            testStrumline.nextNoteIndex = 0;
+            cleanStrumlineData();
 
             if (menubarItemTestNotestyle.selected) isTesting = true;
             else isTesting = false;
@@ -188,9 +198,6 @@ class NotestyleEditor extends MusicBeatState
         menubarItemTestNotestyleHold = menuBar.findComponent('menubarItemTestNotestyleHold');
 
         openNotestyleData();
-        // openNotestyleNoteData();
-        // openNotestyleHoldNoteData();
-        openNotestyleStrumlineNoteData();
 
         // var songMetadata = SongRegistry.instance.parseMusicData(options.data.editorSong.id);
         // trace(songMetadata);
@@ -208,13 +215,21 @@ class NotestyleEditor extends MusicBeatState
         processNotes();
     }
 
+    function cleanStrumlineData():Void
+    {
+        _lastDirection = 0;
+        testStrumline.clean();
+        testStrumline.noteData = [];
+        testStrumline.nextNoteIndex = 0;
+    }
+
     function beatHit()
     {
         super.beatHit();
         
         if (isTesting)
         {
-            var data:SongNoteDataRaw = new SongNoteDataRaw((get_conductorInUse().currentBeat + 4) * msPerBeat, _lastDirection, menubarItemTestNotestyleHold.selected ? 600 : 0, null, null);
+            var data:SongNoteDataRaw = new SongNoteDataRaw((get_conductorInUse().currentBeat + 4) * msPerBeat, _lastDirection, menubarItemTestNotestyleHold.selected ? msPerBeat : 0, null, null);
             testStrumline.addNoteData(data, false);
             _lastDirection = (_lastDirection + 1) % 4;
         }
@@ -250,81 +265,12 @@ class NotestyleEditor extends MusicBeatState
             notestyleDataWindow.windowManager = windowManager;
             add(notestyleDataWindow);
 
-            notestyleDataWindow.x = 15;
+            notestyleDataWindow.x = 10;
             notestyleDataWindow.y = 45;
+
+            // notestyleDataTabview = notestyleDataWindow.findComponent('notestyleDataTabview');
         }
         else windowManager.closeWindow(notestyleDataWindow);
-    }
-
-    function openNotestyleNoteData():Void
-    {
-        if (notestyleNoteDataWindow == null || !notestyleNoteDataWindow.visible)
-        {
-            notestyleNoteDataWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/windows/notestyleNoteDataWindow'));
-            notestyleNoteDataWindow.windowManager = windowManager;
-            add(notestyleNoteDataWindow);
-
-            notestyleNoteDataWindow.x = 15;
-            notestyleNoteDataWindow.y = 305;
-        }
-        else windowManager.closeWindow(notestyleNoteDataWindow);
-    }
-
-    function openNotestyleHoldNoteData():Void
-    {
-        if (notestyleHoldNoteDataWindow == null || !notestyleHoldNoteDataWindow.visible)
-        {
-            notestyleHoldNoteDataWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/windows/notestyleHoldNoteDataWindow'));
-            notestyleHoldNoteDataWindow.windowManager = windowManager;
-            add(notestyleHoldNoteDataWindow);
-
-            notestyleHoldNoteDataWindow.x = 15;
-            notestyleHoldNoteDataWindow.y = 550;
-        }
-        else windowManager.closeWindow(notestyleHoldNoteDataWindow);
-    }
-
-    function openNotestyleStrumlineNoteData():Void
-    {
-        if (notestyleStrumlineNoteDataWindow == null || !notestyleStrumlineNoteDataWindow.visible)
-        {
-            notestyleStrumlineNoteDataWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/windows/notestyleStrumlineDataWindow'));
-            notestyleStrumlineNoteDataWindow.windowManager = windowManager;
-            add(notestyleStrumlineNoteDataWindow);
-
-            notestyleStrumlineNoteDataWindow.x = FlxG.width - notestyleStrumlineNoteDataWindow.width - 15;
-            notestyleStrumlineNoteDataWindow.y = 45;
-
-            trace(ReflectUtil.field(currentNoteStyleData._data.assets.noteStrumline.data, 'leftStatic'));
-
-            notestyleStrumlineNoteDropdown = notestyleStrumlineNoteDataWindow.findComponent('notestyleStrumlineNoteDropdown');
-            strumlineNoteDataFields = notestyleStrumlineNoteDataWindow.findComponent('strumlineNoteDataFields');
-            var prevSelectedID = '';
-
-            notestyleStrumlineNoteDropdown.onChange = () ->
-            {
-                var selected = notestyleStrumlineNoteDropdown.selectedItem;
-                if (selected == null) return;
-
-                var fieldId:String = selected.id;
-                trace(fieldId);
-                if (fieldId == null || fieldId == '') return;
-
-                var existing = strumlineNoteDataFields.findComponent(prevSelectedID);
-                if (existing != null) strumlineNoteDataFields.removeComponent(existing);
-
-                var fieldData = ReflectUtil.field(currentNoteStyleData._data.assets.noteStrumline.data, fieldId);
-                prevSelectedID = fieldId;
-
-                var textField = new TextField();
-                textField.id = fieldId;
-                textField.text = fieldData.prefix;
-                textField.percentWidth = 100;
-                textField.placeholder = 'Prefix for $fieldId';
-
-                strumlineNoteDataFields.addComponent(textField);
-            }
-        }
     }
 
     function openUserGuide():Void
@@ -347,6 +293,32 @@ class NotestyleEditor extends MusicBeatState
             preferenceWindow.windowManager = windowManager;
             preferenceWindow.screenCenter();
             add(preferenceWindow);
+
+            preferencesMusic = preferenceWindow.findComponent('preferencesMusic');
+            songMetaLabel = preferenceWindow.findComponent('songMetaLabel');
+
+            var songMetadata = SongRegistry.instance.parseMusicData(options.data.editorSong);
+            songMetaLabel.text = 'Song Name: ' + songMetadata.songName;
+            if (songMetadata.artist != null) songMetaLabel.text += '\nSong Artist: ' + songMetadata.artist;
+            if (songMetadata.timeChanges[0].bpm != null) songMetaLabel.text += '\nSong BPM: ' + songMetadata.timeChanges[0].bpm;
+
+            for (song in songList) preferencesMusic.dataSource.add({ text: song.metadata.songName, value: song.metadata, id: song.id });
+
+            preferencesMusic.onChange = () ->
+            {
+                var selectedSong = preferencesMusic.selectedItem;
+                options.data.editorSong = selectedSong.id;
+
+                var songMetadata = SongRegistry.instance.parseMusicData(selectedSong.id);
+                songMetaLabel.text = 'Song Name: ' + songMetadata.songName;
+                if (songMetadata.artist != null) songMetaLabel.text += '\nSong Artist: ' + songMetadata.artist;
+                if (songMetadata.timeChanges[0].bpm != null) songMetaLabel.text += '\nSong BPM: ' + songMetadata.timeChanges[0].bpm;
+
+                FunkinSound.playMusic(selectedSong.id, {startingVolume: 0, overrideExisting: true, restartTrack: false, persist: true, loop: true});
+                FlxG.sound.music.fadeIn(0.5, 0, 1);
+                msPerBeat = 60000 / get_conductorInUse().bpm;
+                cleanStrumlineData();
+            }
         }
         else windowManager.closeWindow(preferenceWindow);
     }

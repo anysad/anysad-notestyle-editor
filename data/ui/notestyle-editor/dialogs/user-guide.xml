@@ -13,8 +13,9 @@ If someone genuinely wants to help me with writing a guide,\nplease contact me o
 				</header>
 				<data>
 					<item action="Show User Guide" keybind="F1" />
-					<item action="New Notestyle" keybind="Ctrl + N" />
-					<item action="Save Notestyle" keybind="Ctrl + S" />
+					<item action="Preferences" keybind="F6" />
+					<item action="New" keybind="Ctrl + N" />
+					<item action="Save" keybind="Ctrl + S" />
 					<item action="Quit to Menu" keybind="Ctrl + Q" />
 				</data>
 			</tableview>

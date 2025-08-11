@@ -7,13 +7,7 @@ class NotestyleEditorSettings extends Module
 
     var saveObject:NotestyleEditorSavaData =
     {
-        editorSong:
-        {
-            id: 'offsetsLoop',
-            title: 'Offsets Loop',
-            artist: 'Kawai Sprite',
-            bpm: 100
-        }
+        editorSong: 'offsetsLoop'
     }
 
     function new()
@@ -26,13 +20,5 @@ class NotestyleEditorSettings extends Module
 
 typedef NotestyleEditorSavaData =
 {
-    var editorSong:NotestyleEditorSongSaveData;
-}
-
-typedef NotestyleEditorSongSaveData =
-{
-    var id:String;
-    var title:String;
-    var artist:String;
-    var bpm:Int;
+    var editorSong:String;
 }
