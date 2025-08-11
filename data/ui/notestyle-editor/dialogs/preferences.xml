@@ -1,0 +1,9 @@
+<window width="350" height="350" title="Preferences" maximizable="false" minimizable="false" collapsable="false" >
+    <tabview width="100%" height="100%">
+        <box width="100%" text="Music">
+            <dropdown id="preferencesMusic" text="Select Song" width="100%" searchable="true" />
+
+            <label id="songMetaLabel" text="Song Name: ??" marginTop="35" />
+        </box>
+    </tabview>
+</window>

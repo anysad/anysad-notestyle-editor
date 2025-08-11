@@ -1,0 +1,30 @@
+<window title="Notestyle Hold Note Data" width="350" maximizable="false" minimizable="false" collapsable="false">
+    <vbox width="100%">
+        <grid columns="2" tooltip="The image to use for the asset.\nMay be a Sparrow sprite sheet." width="100%">
+            <label text="Asset Path" verticalAlign="center" />
+            <textfield id="notestyleHoldNoteAssetPath" placeholder="Image to use as an asset." width="100%" />
+        </grid>
+
+        <grid columns="2" width="100%">
+            <hbox width="100%" tooltip="The scale to render the hold note at." verticalAlign="center" >
+                <label text="Scale" verticalAlign="center" />
+                <number-stepper id="notestyleHoldNoteScale" style="font-size: 10px" pos="1" step="0.1" min="0.1" width="100%" />
+            </hbox>
+            <hbox width="100%" tooltip="If true, the note is a pixel sprite, and\nwill be rendered without anti-aliasing." verticalAlign="center" >
+                <label text="Is Hold Note Pixel?" verticalAlign="center" />
+                <checkbox id="notestyleHoldNotePixel" width="100%" verticalAlign="center" />
+            </hbox>
+        </grid>
+
+        <grid columns="2" width="100%" tooltip="Offset the sprite's position by this amount." >
+            <hbox width="100%" verticalAlign="center" >
+                <label text="Offset X" verticalAlign="center" />
+                <number-stepper id="notestyleHoldNoteOffsetX" style="font-size: 10px" pos="0" step="0.5" width="100%" />
+            </hbox>
+            <hbox width="100%" verticalAlign="center" >
+                <label text="Offset Y" verticalAlign="center" />
+                <number-stepper id="notestyleHoldNoteOffsetY" style="font-size: 10px" pos="0" step="0.5" width="100%" />
+            </hbox>
+        </grid>
+    </vbox>
+</window>

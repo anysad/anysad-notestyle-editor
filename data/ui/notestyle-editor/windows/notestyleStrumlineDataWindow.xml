@@ -1,0 +1,50 @@
+<window title="Notestyle Strumline Note Data" width="380" maximizable="false" minimizable="false" collapsable="false">
+    <vbox width="100%">
+        <grid columns="2" tooltip="The image to use for the asset.\nMay be a Sparrow sprite sheet." width="100%">
+            <label text="Asset Path" verticalAlign="center" />
+            <textfield id="notestyleStrumlineNoteAssetPath" placeholder="Image to use as an asset." width="100%" />
+        </grid>
+
+        <grid columns="2" width="100%">
+            <hbox width="100%" tooltip="The scale to render the strumline note at." verticalAlign="center" >
+                <label text="Scale" verticalAlign="center" />
+                <number-stepper id="notestyleStrumlineNoteScale" style="font-size: 10px" pos="1" step="0.1" min="0.1" width="100%" />
+            </hbox>
+            <hbox width="100%" tooltip="If true, the note is a pixel sprite, and\nwill be rendered without anti-aliasing." verticalAlign="center" >
+                <label text="Is Strumline Pixel?" verticalAlign="center" />
+                <checkbox id="notestyleStrumlineNotePixel" width="100%" verticalAlign="center" />
+            </hbox>
+        </grid>
+
+        <grid columns="2" width="100%" tooltip="Offset the sprite's position by this amount." >
+            <hbox width="100%" verticalAlign="center" >
+                <label text="Offset X" verticalAlign="center" />
+                <number-stepper id="notestyleStrumlineNoteOffsetX" style="font-size: 10px" pos="0" step="0.5" width="100%" />
+            </hbox>
+            <hbox width="100%" verticalAlign="center" >
+                <label text="Offset Y" verticalAlign="center" />
+                <number-stepper id="notestyleStrumlineNoteOffsetY" style="font-size: 10px" pos="0" step="0.5" width="100%" />
+            </hbox>
+        </grid>
+    </vbox>
+
+    <menu-separator />
+
+    <vbox width="100%">
+        <label text="Strumline Data Prefixes" style="font-size: 17px" verticalAlign="center" horizontalAlign="center" />
+        <grid columns="3" width="100%">
+            <hbox tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteLeft'." width="100%" >
+               <label text="Left Static" verticalAlign="center" />
+                <textfield id="notestyleLeftNotePrefix" placeholder="Prefix" width="100%" /> 
+            </hbox>
+            <hbox tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteDown'." width="100%" >
+                <label text="Left Press" verticalAlign="center" />
+                <textfield id="notestyleDownNotePrefix" placeholder="Prefix" width="100%" />
+            </hbox>
+            <hbox tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteDown'." width="100%" >
+                <label text="Left Confirm" verticalAlign="center" />
+                <textfield id="notestyleDownNotePrefix" placeholder="Prefix" width="100%" />
+            </hbox>
+        </grid>
+    </vbox>
+</window>

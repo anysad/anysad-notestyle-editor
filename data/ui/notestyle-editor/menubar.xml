@@ -8,9 +8,9 @@
   </style>
 
   <menu text="File">
-    <menu-item id="menubarItemNewNotestyle" text="New Notestyle" shortcutText="Ctrl + N" />
+    <menu-item id="menubarItemNewNotestyle" text="New" shortcutText="Ctrl + N" />
     <menu-separator />
-    <menu-item id="menubarItemSaveNotestyle" text="Save Notestyle" shortcutText="Ctrl + S"/>
+    <menu-item id="menubarItemSaveNotestyle" text="Save" shortcutText="Ctrl + S"/>
     <menu-separator />
     <menu-item id="menubarItemExit" text="Exit To Menu" shortcutText="Ctrl + Q" />
   </menu>

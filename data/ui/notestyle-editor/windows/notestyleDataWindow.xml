@@ -1,4 +1,4 @@
-<window title="Notestyle Data" width="390" maximizable="false" minimizable="false" closable="false">
+<window title="Notestyle Data" width="350" maximizable="false" minimizable="false" closable="false">
     <vbox width="100%">
         <dropdown id="notestyleDropdown" text="Select Notestyle" width="100%" searchable="true" />
     </vbox>
@@ -16,23 +16,18 @@
         </grid>
         <grid columns="2" tooltip="The note style to use as a fallback/parent." width="100%">
             <label text="Fallback" verticalAlign="center" />
-            <textfield id="notestyleFallback" placeholder="The notestyle to use as fallback." width="100%" />
+            <dropdown id="notestyleFallback" text="Select Fallback" width="100%" />
         </grid>
     </vbox>
 
     <menu-separator />
 
     <hbox width="100%" >
-      <button id="openNoteEditorButton" text="Note Editor" width="50%" />
-      <button id="openHoldNoteEditorButton" text="Hold Note Editor" width="50%" />
+      <button id="openNoteEditorButton" text="Note" width="50%" />
+      <button id="openHoldNoteEditorButton" text="Hold Note" width="50%" />
     </hbox>
     <hbox width="100%">
-      <button id="openStrumlineEditorButton" text="Strumline Editor" width="50%" />
-      <button id="openSplashCoverEditorButton" text="Note Splash/Cover Editor" width="50%" />
+      <button id="openStrumlineEditorButton" text="Strumline" width="50%" />
+      <button id="openSplashCoverEditorButton" text="Note Splash/Cover" width="50%" />
     </hbox>
-    
-    <!-- <hbox width="100%">
-      <button id="openCountdownEditorButton" text="Countdown / Sounds" width="100%" />
-      <button id="openJudgementEditorButton" text="Judgements / Combo" width="100%" />
-    </hbox> -->
 </window>

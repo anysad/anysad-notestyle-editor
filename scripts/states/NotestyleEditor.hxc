@@ -42,9 +42,7 @@ import funkin.modding.events.HitNoteScriptEvent;
 import haxe.Json;
 import haxe.ui.RuntimeComponentBuilder;
 import haxe.ui.components.Label;
-import haxe.ui.components.Image;
 import haxe.ui.components.Button;
-import haxe.ui.components.TabBar;
 import haxe.ui.components.Column;
 import haxe.ui.components.DropDown;
 import haxe.ui.components.TextArea;
@@ -87,8 +85,9 @@ class NotestyleEditor extends MusicBeatState
     var testStrumline:Strumline;
     var currentNoteStyleData:NoteStyle;
 
-    var options = new NotestyleEditorSettings().options;
+    var options = new NotestyleEditorSettings();
 
+    // menubar
     var menuBar:MenuBar;
     var menubarItemNewNotestyle:MenuItem;
     var menubarItemSaveNotestyle:MenuItem;
@@ -97,9 +96,23 @@ class NotestyleEditor extends MusicBeatState
     var menubarItemTestNotestyleHold:MenuCheckBox;
     var menubarItemUserGuide:MenuItem;
 
+    // windows
     var notestyleDataWindow:Window;
     var notestyleNoteDataWindow:Window;
+    var notestyleHoldNoteDataWindow:Window;
+    var notestyleStrumlineNoteDataWindow:Window;
     var userGuideWindow:Window;
+    var preferenceWindow:Window;
+
+    // notestyleDataWindow UI
+    var notestyleDropdown:DropDown;
+    var notestyleName:TextField;
+    var notestyleArtist:TextField;
+    var notestyleFallback:DropDown;
+    var openNoteEditorButton:Button;
+    var openHoldNoteEditorButton:Button;
+    var openStrumlineEditorButton:Button;
+    var openSplashCoverEditorButton:Button;
 
     var _lastDirection:Int = 0;
     var isTesting:Bool = false;
@@ -116,7 +129,7 @@ class NotestyleEditor extends MusicBeatState
 
         var chartEditor = new ChartEditorState();
 
-        FunkinSound.playMusic(options.editorSong.id, {startingVolume: 0, overrideExisting: true, restartTrack: false, persist: true, loop: true});
+        FunkinSound.playMusic(options.data.editorSong.id, {startingVolume: 0, overrideExisting: true, restartTrack: false, persist: true, loop: true});
         FlxG.sound.music.fadeIn(0.5, 0, 1);
 
         WindowUtil.setWindowTitle("Friday Night Funkin' - anysad Notestyle Editor");
@@ -170,19 +183,16 @@ class NotestyleEditor extends MusicBeatState
 
         menubarItemTestNotestyleHold = menuBar.findComponent('menubarItemTestNotestyleHold');
 
-        notestyleDataWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/windows/notestyleDataWindow'));
-        notestyleDataWindow.windowManager = windowManager;
-        add(notestyleDataWindow);
+        openNotestyleData();
 
-        notestyleDataWindow.x = 5;
-        notestyleDataWindow.y = 60;
+        openNotestyleNoteData();
 
-        notestyleNoteDataWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/windows/notestyleNoteDataWindow'));
-        notestyleNoteDataWindow.windowManager = windowManager;
-        add(notestyleNoteDataWindow);
+        openNotestyleHoldNoteData();
 
-        notestyleNoteDataWindow.x = 5;
-        notestyleNoteDataWindow.y = 339;
+        var songMetadata = SongRegistry.instance.parseMusicData(options.data.editorSong.id);
+        trace(songMetadata);
+        trace(songMetadata.timeChanges);
+        trace(songMetadata.timeChanges[0].bpm);
     }
 
     function update(elapsed:Float):Void
@@ -211,20 +221,73 @@ class NotestyleEditor extends MusicBeatState
     {
         if (pressingControl() && FlxG.keys.justPressed.Q) FlxG.switchState(() -> new MainMenuState());
         if (FlxG.keys.justPressed.F1) openUserGuide();
-        if (FlxG.keys.justPressed.T)
-        {
-            var noteAssetPath = currentNoteStyleData._data.assets.note.assetPath;
-            var image = Paths.image(Paths.stripLibrary(noteAssetPath), currentNoteStyleData.getAssetLibrary(noteAssetPath));
-            if (currentNoteStyleData._data.assets.note.assetPath == "shared:notes")
-            {
-                currentNoteStyleData._data.assets.note.assetPath = "week6:weeb/pixelUI/arrows-pixels";
-            }
-            else if (currentNoteStyleData._data.assets.note.assetPath == "week6:weeb/pixelUI/arrows-pixels")
-            {
-                currentNoteStyleData._data.assets.note.assetPath = "shared:notes";
-            }
+        if (FlxG.keys.justPressed.F6) openPreferences();
+        // if (FlxG.keys.justPressed.T)
+        // {
+        //     var noteAssetPath = currentNoteStyleData._data.assets.note.assetPath;
+        //     var image = Paths.image(Paths.stripLibrary(noteAssetPath), currentNoteStyleData.getAssetLibrary(noteAssetPath));
+        //     if (currentNoteStyleData._data.assets.note.assetPath == "shared:notes")
+        //     {
+        //         currentNoteStyleData._data.assets.note.assetPath = "week6:weeb/pixelUI/arrows-pixels";
+        //     }
+        //     else if (currentNoteStyleData._data.assets.note.assetPath == "week6:weeb/pixelUI/arrows-pixels")
+        //     {
+        //         currentNoteStyleData._data.assets.note.assetPath = "shared:notes";
+        //     }
 
-            updateRegularNotes(testStrumline, currentNoteStyleData);
+        //     updateRegularNotes(testStrumline, currentNoteStyleData);
+        // }
+    }
+
+    function openNotestyleData():Void
+    {
+        if (notestyleDataWindow == null || !notestyleDataWindow.visible)
+        {
+            notestyleDataWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/windows/notestyleDataWindow'));
+            notestyleDataWindow.windowManager = windowManager;
+            add(notestyleDataWindow);
+
+            notestyleDataWindow.x = 15;
+            notestyleDataWindow.y = 45;
+
+            
+        }
+        else windowManager.closeWindow(notestyleDataWindow);
+    }
+
+    function openNotestyleNoteData():Void
+    {
+        if (notestyleNoteDataWindow == null || !notestyleNoteDataWindow.visible)
+        {
+            notestyleNoteDataWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/windows/notestyleNoteDataWindow'));
+            notestyleNoteDataWindow.windowManager = windowManager;
+            add(notestyleNoteDataWindow);
+
+            notestyleNoteDataWindow.x = 15;
+            notestyleNoteDataWindow.y = 305;
+        }
+        else windowManager.closeWindow(notestyleNoteDataWindow);
+    }
+
+    function openNotestyleHoldNoteData():Void
+    {
+        if (notestyleHoldNoteDataWindow == null || !notestyleHoldNoteDataWindow.visible)
+        {
+            notestyleHoldNoteDataWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/windows/notestyleHoldNoteDataWindow'));
+            notestyleHoldNoteDataWindow.windowManager = windowManager;
+            add(notestyleHoldNoteDataWindow);
+
+            notestyleHoldNoteDataWindow.x = 15;
+            notestyleHoldNoteDataWindow.y = 550;
+        }
+        else windowManager.closeWindow(notestyleHoldNoteDataWindow);
+    }
+
+    function openNotestyleStrumlineNoteData():Void
+    {
+        if (notestyleStrumlineNoteDataWindow == null || !notestyleStrumlineNoteDataWindow.visible)
+        {
+
         }
     }
 
@@ -238,6 +301,18 @@ class NotestyleEditor extends MusicBeatState
             add(userGuideWindow);
         }
         else windowManager.closeWindow(userGuideWindow);
+    }
+
+    function openPreferences():Void
+    {
+        if (preferenceWindow == null || !preferenceWindow.visible)
+        {
+            preferenceWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/dialogs/preferences'));
+            preferenceWindow.windowManager = windowManager;
+            preferenceWindow.screenCenter();
+            add(preferenceWindow);
+        }
+        else windowManager.closeWindow(preferenceWindow);
     }
 
     function pressingControl():Bool

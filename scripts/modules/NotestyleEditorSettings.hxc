@@ -3,7 +3,7 @@ import funkin.save.Save;
 
 class NotestyleEditorSettings extends Module
 {
-    var options:NotestyleEditorSavaData = Save.instance.modOptions.get("anysadNotestyleOptions");
+    var data:NotestyleEditorSavaData = Save.instance.modOptions.get("NotestyleEditorSettings");
 
     var saveObject:NotestyleEditorSavaData =
     {
@@ -24,7 +24,6 @@ class NotestyleEditorSettings extends Module
     }
 }
 
-// kill me for the naming idc
 typedef NotestyleEditorSavaData =
 {
     var editorSong:NotestyleEditorSongSaveData;
