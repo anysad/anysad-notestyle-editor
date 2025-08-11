@@ -1,4 +1,4 @@
-<window title="Notestyle Strumline Note Data" width="380" maximizable="false" minimizable="false" collapsable="false">
+<window title="Notestyle Strumline Note Data" width="350" maximizable="false" minimizable="false" collapsable="false">
     <vbox width="100%">
         <grid columns="2" tooltip="The image to use for the asset.\nMay be a Sparrow sprite sheet." width="100%">
             <label text="Asset Path" verticalAlign="center" />
@@ -31,20 +31,32 @@
     <menu-separator />
 
     <vbox width="100%">
-        <label text="Strumline Data Prefixes" style="font-size: 17px" verticalAlign="center" horizontalAlign="center" />
-        <grid columns="3" width="100%">
-            <hbox tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteLeft'." width="100%" >
-               <label text="Left Static" verticalAlign="center" />
-                <textfield id="notestyleLeftNotePrefix" placeholder="Prefix" width="100%" /> 
-            </hbox>
-            <hbox tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteDown'." width="100%" >
-                <label text="Left Press" verticalAlign="center" />
-                <textfield id="notestyleDownNotePrefix" placeholder="Prefix" width="100%" />
-            </hbox>
-            <hbox tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for 'Funkin' notestyle it's 'noteDown'." width="100%" >
-                <label text="Left Confirm" verticalAlign="center" />
-                <textfield id="notestyleDownNotePrefix" placeholder="Prefix" width="100%" />
-            </hbox>
-        </grid>
+        <dropdown id="notestyleStrumlineNoteDropdown" text="Select Data to change" width="100%" searchable="true">
+            <data>
+                <item text="Left Static" id="leftStatic" />
+                <item text="Left Press" id="leftPress" />
+                <item text="Left Confirm" id="leftConfirm" />
+                <item text="Left Confirm Hold" id="leftConfirmHold" />
+
+                <item text="Down Static" id="downStatic" />
+                <item text="Down Press" id="downPress" />
+                <item text="Down Confirm" id="downConfirm" />
+                <item text="Down Confirm Hold" id="downConfirmHold" />
+
+                <item text="Up Static" id="upStatic" />
+                <item text="Up Press" id="upPress" />
+                <item text="Up Confirm" id="upConfirm" />
+                <item text="Up Confirm Hold" id="upConfirmHold" />
+
+                <item text="Right Static" id="rightStatic" />
+                <item text="Right Press" id="rightPress" />
+                <item text="Right Confirm" id="rightConfirm" />
+                <item text="Right Confirm Hold" id="rightConfirmHold" />
+            </data>
+        </dropdown>
+
+        <hbox id="strumlineNoteDataFields" width="100%" verticalAlign="center" >
+            <label id="strumlineNoteDataLabel" text="Note Prefix:" verticalAlign="center" />
+        </hbox>
     </vbox>
 </window>

@@ -114,6 +114,10 @@ class NotestyleEditor extends MusicBeatState
     var openStrumlineEditorButton:Button;
     var openSplashCoverEditorButton:Button;
 
+    // notestyleStrumlineNoteDataWindow UI
+    var notestyleStrumlineNoteDropdown:DropDown;
+    var strumlineNoteDataFields:HBox;
+
     var _lastDirection:Int = 0;
     var isTesting:Bool = false;
     var msPerBeat:Float = 60000 / 100;
@@ -184,15 +188,14 @@ class NotestyleEditor extends MusicBeatState
         menubarItemTestNotestyleHold = menuBar.findComponent('menubarItemTestNotestyleHold');
 
         openNotestyleData();
+        // openNotestyleNoteData();
+        // openNotestyleHoldNoteData();
+        openNotestyleStrumlineNoteData();
 
-        openNotestyleNoteData();
-
-        openNotestyleHoldNoteData();
-
-        var songMetadata = SongRegistry.instance.parseMusicData(options.data.editorSong.id);
-        trace(songMetadata);
-        trace(songMetadata.timeChanges);
-        trace(songMetadata.timeChanges[0].bpm);
+        // var songMetadata = SongRegistry.instance.parseMusicData(options.data.editorSong.id);
+        // trace(songMetadata);
+        // trace(songMetadata.timeChanges);
+        // trace(songMetadata.timeChanges[0].bpm);
     }
 
     function update(elapsed:Float):Void
@@ -202,7 +205,7 @@ class NotestyleEditor extends MusicBeatState
 
         handleKeybinds();
 
-        processNotes(elapsed);
+        processNotes();
     }
 
     function beatHit()
@@ -249,8 +252,6 @@ class NotestyleEditor extends MusicBeatState
 
             notestyleDataWindow.x = 15;
             notestyleDataWindow.y = 45;
-
-            
         }
         else windowManager.closeWindow(notestyleDataWindow);
     }
@@ -287,7 +288,42 @@ class NotestyleEditor extends MusicBeatState
     {
         if (notestyleStrumlineNoteDataWindow == null || !notestyleStrumlineNoteDataWindow.visible)
         {
+            notestyleStrumlineNoteDataWindow = RuntimeComponentBuilder.build(Paths.ui('notestyle-editor/windows/notestyleStrumlineDataWindow'));
+            notestyleStrumlineNoteDataWindow.windowManager = windowManager;
+            add(notestyleStrumlineNoteDataWindow);
 
+            notestyleStrumlineNoteDataWindow.x = FlxG.width - notestyleStrumlineNoteDataWindow.width - 15;
+            notestyleStrumlineNoteDataWindow.y = 45;
+
+            trace(ReflectUtil.field(currentNoteStyleData._data.assets.noteStrumline.data, 'leftStatic'));
+
+            notestyleStrumlineNoteDropdown = notestyleStrumlineNoteDataWindow.findComponent('notestyleStrumlineNoteDropdown');
+            strumlineNoteDataFields = notestyleStrumlineNoteDataWindow.findComponent('strumlineNoteDataFields');
+            var prevSelectedID = '';
+
+            notestyleStrumlineNoteDropdown.onChange = () ->
+            {
+                var selected = notestyleStrumlineNoteDropdown.selectedItem;
+                if (selected == null) return;
+
+                var fieldId:String = selected.id;
+                trace(fieldId);
+                if (fieldId == null || fieldId == '') return;
+
+                var existing = strumlineNoteDataFields.findComponent(prevSelectedID);
+                if (existing != null) strumlineNoteDataFields.removeComponent(existing);
+
+                var fieldData = ReflectUtil.field(currentNoteStyleData._data.assets.noteStrumline.data, fieldId);
+                prevSelectedID = fieldId;
+
+                var textField = new TextField();
+                textField.id = fieldId;
+                textField.text = fieldData.prefix;
+                textField.percentWidth = 100;
+                textField.placeholder = 'Prefix for $fieldId';
+
+                strumlineNoteDataFields.addComponent(textField);
+            }
         }
     }
 
@@ -320,7 +356,7 @@ class NotestyleEditor extends MusicBeatState
         return FlxG.keys.pressed.CONTROL || FlxG.keys.pressed.WINDOWS;
     }
 
-    function processNotes(elapsed:Float):Void
+    function processNotes():Void
     {
         if (testStrumline?.notes?.members == null) return;
 
