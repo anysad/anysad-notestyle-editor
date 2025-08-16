@@ -1,7 +1,7 @@
-<window title="Notestyle Data" width="380" height="350" maximizable="false" minimizable="false" closable="false">
-    <tabview id="notestyleDataTabview" width="100%" height="100%">
-        <box width="100%" height="100%" text="Basics">
-            <vbox width="100%" height="100%">
+<dialog title="Notestyle Data" width="380" closable="false">
+    <tabview id="notestyleDataTabview" width="100%">
+        <box width="100%" text="Basics">
+            <vbox width="100%">
                 <dropdown id="notestyleDropdown" text="Select Notestyle" width="100%" searchable="true" />
 
                 <menu-separator />
@@ -16,14 +16,14 @@
                 </grid>
                 <grid columns="2" tooltip="The note style to use as a fallback/parent." width="100%">
                     <label text="Fallback" verticalAlign="center" />
-                    <dropdown id="notestyleFallback" text="Select Fallback" width="100%" />
+                    <dropdown id="notestyleFallback" text="Select Fallback" width="100%" searchable="true" />
                 </grid>
             </vbox>
         </box>
 
 
 
-        <box width="100%" height="100%" text="Notes">
+        <box width="100%" text="Notes">
             <vbox width="100%">
                 <grid columns="2" tooltip="The image to use for the asset.\nMay be a Sparrow sprite sheet." width="100%">
                     <label text="Asset Path" verticalAlign="center" />
@@ -55,7 +55,7 @@
                 <menu-separator />
 
                 <label text="Note Data Prefixes" style="font-size: 17px" verticalAlign="center" horizontalAlign="center" />
-                <dropdown id="notestyleDropdown" text="Select Note Direction to modify" width="100%" searchable="true">
+                <dropdown id="notestyleNoteDropdown" text="Select Note Direction to modify" width="100%" searchable="true">
                     <data>
                         <item text="Left Note" id="notestyleLeftNotePrefix"/>
                         <item text="Down Note" id="notestyleDownNotePrefix"/>
@@ -66,7 +66,7 @@
                 <grid columns="2" width="100%">
                     <hbox tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for left note in 'Funkin' notestyle it's 'noteLeft'." width="100%" >
                         <label text="Direction Note Prefic" verticalAlign="center" />
-                        <textfield id="notestyleDirectionNotePrefix" placeholder="Prefix" width="100%" /> 
+                        <textfield id="notestyleDirectionNotePrefix" userData="" placeholder="Prefix" width="100%" /> 
                     </hbox>
                 </grid>
             </vbox>
@@ -74,7 +74,7 @@
         
 
 
-        <box width="100%" height="100%" text="Hold Notes">
+        <box width="100%" text="Hold Notes">
             <vbox width="100%">
                 <grid columns="2" tooltip="The image to use for the asset.\nMay be a Sparrow sprite sheet." width="100%">
                     <label text="Asset Path" verticalAlign="center" />
@@ -107,7 +107,7 @@
 
 
 
-        <box width="100%" height="100%" text="Strumline Notes">
+        <box width="100%" text="Strumline Notes">
             <vbox width="100%">
                 <grid columns="2" tooltip="The image to use for the asset.\nMay be a Sparrow sprite sheet." width="100%">
                     <label text="Asset Path" verticalAlign="center" />
@@ -138,6 +138,7 @@
 
                 <menu-separator />
 
+                <label text="Strumline Note Data Prefixes" style="font-size: 17px" verticalAlign="center" horizontalAlign="center" />
                 <dropdown id="notestyleStrumlineNoteDropdown" text="Select Strumline Note to modify" width="100%" searchable="true">
                     <data>
                         <item text="Left Static" id="leftStatic" />
@@ -162,22 +163,37 @@
                     </data>
                 </dropdown>
 
-                <hbox id="strumlineNoteDataFields" width="100%" verticalAlign="center" >
-                    <label id="strumlineNoteDataLabel" text="Note Prefix:" verticalAlign="center" />
-                </hbox>
+                <grid id="strumlineNoteDataFields" columns="2" width="100%">
+                    <hbox tooltip="The prefix for the frames of the animation as defined by the XML file.\nFor example, for left note in 'Funkin' notestyle it's 'noteLeft'." width="100%" >
+                        <label id="strumlineNoteDataLabel" text="Strumline Note Prefic" verticalAlign="center" />
+                        <textfield id="notestyleStrumlineNotePrefix" userData="" placeholder="Prefix" width="100%" /> 
+                    </hbox>
+                </grid>
             </vbox>
         </box>
 
 
 
-        <box width="100%" height="100%" text="Note Splashes">
+        <box width="100%" text="Note Splashes">
 
         </box>
 
 
 
-        <box width="100%" height="100%" text="Hold Note Covers">
+        <box width="100%" text="Hold Note Covers">
+
+        </box>
+
+
+
+        <box width="100%" text="Countdowns">
+
+        </box>
+
+
+
+        <box width="100%" text="Pop-ups">
 
         </box>
     </tabview>
-</window>
+</dialog>
